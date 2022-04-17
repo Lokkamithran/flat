@@ -85,32 +85,54 @@ struct TuringMachine
 
 int main(){
     Rule r1('0', 'B', Direction::RIGHT);
-    Rule r2('1', 'B', Direction::RIGHT);
-    Rule r3('B', 'B', Direction::RIGHT);
+    Rule r2('0', '0', Direction::RIGHT);
+    Rule r3('0', 'X', Direction::LEFT);
+    Rule r4('0', '0', Direction::LEFT);
+
+    Rule r5('1', 'B', Direction::RIGHT);
+    Rule r6('1', 'X', Direction::LEFT);
+    Rule r7('1', '1', Direction::RIGHT);
+    Rule r8('1', '1', Direction::LEFT);
+
+    Rule r9('X', 'B', Direction::RIGHT);
+    Rule r10('X', 'X', Direction::RIGHT);
+    Rule r11('X', 'X', Direction::LEFT);
+
+    Rule r12('B', 'B', Direction::RIGHT);
     
     State q0; q0.name = "q0";
     State q1; q1.name = "q1";
     State q2; q2.name = "q2";
+    State q3; q3.name = "q3";
     State qa; qa.name = "qa";
     State qr; qr.name = "qr";
    
     q0.transition.emplace(r1, &q1);
-    q0.transition.emplace(r2, &qr);
+    q0.transition.emplace(r5, &q2);
+    q0.transition.emplace(r9, &q0);
+    q0.transition.emplace(r12, &qa);
     
-    q1.transition.emplace(r1, &q2);
     q1.transition.emplace(r2, &q1);
-    q1.transition.emplace(r3, &qr);
+    q1.transition.emplace(r6, &q3);
+    q1.transition.emplace(r10, &q1);
+    q1.transition.emplace(r12, &qr);
 
-    q2.transition.emplace(r3, &qa);
-    q2.transition.emplace(r1, &qr);
-    q2.transition.emplace(r2, &qr);
+    q2.transition.emplace(r3, &q3);
+    q2.transition.emplace(r7, &q2);
+    q2.transition.emplace(r10, &q2);
+    q2.transition.emplace(r12, &qr);
 
-    TuringMachine tm(q0, qa, qr, {q0, q1, q2, qa, qr}, {'0', '1'}, {'0', '1', 'B'});
+    q3.transition.emplace(r4, &q3);
+    q3.transition.emplace(r8, &q3);
+    q3.transition.emplace(r11, &q3);
+    q3.transition.emplace(r12, &q0);
+
+    TuringMachine tm(q0, qa, qr, {q0, q1, q2, q3, qa, qr}, {'0', '1', 'X'}, {'0', '1', 'X', 'B'});
     
-    // //cout << "Enter the input string: ";
-    // // string input;
-    // // cin >> input;
-    Result result = tm.processInputString("01111110BBBB");
+    cout << "Enter the input string: ";
+    string input;
+    cin >> input;
+    Result result = tm.processInputString(input);
     if(result == Result::ACCEPTED)
         cout << "The input string is accepted." << endl;
     else if(result == Result::REJECTED)
